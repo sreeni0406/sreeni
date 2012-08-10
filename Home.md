@@ -36,7 +36,7 @@ with little to no coding on your part.
         ...
         stormpathClient = com.stormpath.shiro.client.ClientFactory
         # Replace this value with the file location from #2 above:
-        stormpathClient.builder.apiKeyFileLocation = /home/myhomedir/.stormpath/apiKey.properties
+        stormpathClient.clientBuilder.apiKeyFileLocation = /home/myhomedir/.stormpath/apiKey.properties
 
         stormpathRealm = com.stormpath.shiro.realm.ApplicationRealm
         stormpathRealm.client = $stormpathClient
