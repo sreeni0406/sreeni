@@ -16,7 +16,7 @@ with little to no coding on your part.
         <dependency>
             <groupId>com.stormpath.shiro</groupId>
             <artifactId>stormpath-shiro-core</artifactId>
-            <version>0.2.0</version>
+            <version>0.2.1</version>
         </dependency>
         <dependency>
             <groupId>com.stormpath.sdk</groupId>
