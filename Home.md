@@ -21,7 +21,7 @@ with little to no coding on your part.
         <dependency>
             <groupId>com.stormpath.sdk</groupId>
             <artifactId>stormpath-sdk-httpclient</artifactId>
-            <version>0.5.0</version>
+            <version>0.7.0</version>
             <scope>runtime</scope>
         </dependency>
 
