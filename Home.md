@@ -105,7 +105,7 @@ In your `shiro.ini` (or compatible configuration mechanism), you can set the sup
     groupRoleResolver.setModeNames = NAME, HREF
     stormpathRealm.groupRoleResolver = $groupRoleResolver
 
-The modes (or mode names) allow you to specify the Group properties that will be considered by Shiro as role 'names'.  The default is `href`.  The supported modes are the following:
+The modes (or mode names) allow you to specify which Group properties Shiro will consider as role 'names'.  The default is `href`.  The supported modes are the following:
 
 * *HREF*: the Group's `href` property will be considered a Shiro role name.  This is the default mode if not configured otherwise.  Allows a Shiro role check to look like the following: `subject.hasRole(group.getHref())`.
 * *NAME*: the Group's `name` property will be considered a Shiro role name.  This allows a Shiro role check to look like the following: `subject.hasRole(group.getName())`.  This however has the downside that if the Group name is changed, your existing checks for that name are likely to fail.
