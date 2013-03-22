@@ -86,7 +86,7 @@ While it is possible (and maybe more intuitive) to use the Group name for the ro
 
 Instead, it is recommended to perform role checks with a stable identifier.
 
-You can use a Stormpath Group`s `href` property as the role 'name' and check that:
+You can use a Stormpath Group's `href` property as the role 'name' and check that:
 
     String groupHref = stormpathGroup.getHref();
     if (subject.hasRole(name)) { 
