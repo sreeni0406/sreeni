@@ -122,7 +122,7 @@ If the above default role name resolution logic does not meet your needs or if y
 
 ### Permission checks ###
 
-Stormpath does not yet have a permission concept that maps to Shiro's, but you can still resolve a set of Permissions that you want attributed with a Stormpath Group or Stormpath Account by implementing the SDK's `*PermissionResolver` interfaces.  This allows you to call Shiro `subject.isPermitted` methods and have them function correctly based on Stormpath Group or Accounts.
+Stormpath does not yet have a permission concept that maps to Shiro's, but you can still resolve a set of Permissions that you want attributed with a Stormpath Group or Stormpath Account by implementing the  `*PermissionResolver` interfaces.  This allows you to call Shiro `subject.isPermitted` methods and have them function correctly based on Stormpath Group or Accounts.
 
 The `*PermissionResolver` interfaces allow you to simulate full permission associations to Stormpath `Group`s or `Account`s even though Stormpath does not store these permissions directly.  Your `*PermissionResolver` implementation(s) would likely query a data store or file or other mechanism to get assigned permissions for a given Stormpath `Group` or `Account`.
 
