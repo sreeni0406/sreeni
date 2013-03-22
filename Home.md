@@ -180,7 +180,7 @@ After you've configured this you can perform permission checks.  For example, pe
         //do something
     }
 
-This check would succeed if the `MyAccountPermissionResolver` implementation returned that permission for the corresponding account.
+This check would succeed if the `MyAccountPermissionResolver` implementation returned that permission for the Subject's backing `Account`.
 
 #### GroupPermissionResolver ####
 
