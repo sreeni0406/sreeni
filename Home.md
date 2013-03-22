@@ -108,7 +108,7 @@ In your `shiro.ini` (or compatible configuration mechanism), you can set the sup
 The modes (or mode names) allow you to specify which Group properties Shiro will consider as role 'names'.  The default is `href`, but you can specify more than one if desired.  The supported modes are the following:
 
 * *HREF*: the Group's `href` property will be considered a Shiro role name.  This is the default mode if not configured otherwise.  Allows a Shiro role check to look like the following: `subject.hasRole(group.getHref())`.
-* *NAME*: the Group's `name` property will be considered a Shiro role name.  This allows a Shiro role check to look like the following: `subject.hasRole(group.getName())`.  This however has the downside that if the Group name is changed, your existing checks for that name are likely to fail.
+* *NAME*: the Group's `name` property will be considered a Shiro role name.  This allows a Shiro role check to look like the following: `subject.hasRole(group.getName())`.  This however has the downside that if you (or someone else on your team or in your company) changes the Group's name, you will have to update your role check code to reflect the new names (otherwise the existing checks are very likely to fail).
 * *ID*: the Group's unique id will be considered a Shiro role name.  The unique id is the id at the end of the Group's HREF url.  This is a deprecated mode and should ideally not be used in new applications.
 
 #### The GroupRoleResolver Interface ####
