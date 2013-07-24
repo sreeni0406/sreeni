@@ -1,4 +1,4 @@
-# Stormpath Shiro Integration #
+# Apache Shiro plugin for Stormpath #
 
 The `stormpath-shiro` plugin allows an [Apache Shiro](http://shiro.apache.org)-enabled application
 use the [Stormpath](http://www.stormpath.com) User Management & Authentication service for all authentication and access control needs.
