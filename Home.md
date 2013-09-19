@@ -14,12 +14,12 @@ with little to no coding on your part.
         <dependency>
             <groupId>com.stormpath.shiro</groupId>
             <artifactId>stormpath-shiro-core</artifactId>
-            <version>0.3.1</version>
+            <version>0.4.0</version>
         </dependency>
         <dependency>
             <groupId>com.stormpath.sdk</groupId>
             <artifactId>stormpath-sdk-httpclient</artifactId>
-            <version>0.8.0</version>
+            <version>0.8.1</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -35,6 +35,8 @@ with little to no coding on your part.
         stormpathClient = com.stormpath.shiro.client.ClientFactory
         # Replace this value with the file location from #2 above:
         stormpathClient.apiKeyFileLocation = /home/myhomedir/.stormpath/apiKey.properties
+        # If you've configured a Shiro CacheManager (recommended to reduce network calls):
+        stormpathClient.cacheManager = $cacheManager
 
         stormpathRealm = com.stormpath.shiro.realm.ApplicationRealm
         stormpathRealm.client = $stormpathClient
