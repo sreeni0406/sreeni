@@ -45,8 +45,7 @@ with little to no coding on your part.
         securityManager.realm = $stormpathRealm
 
 4. Replace the `stormpathRealm.applicationRestUrl` value above with your
-   [Application's Stormpath-specific REST URL](http://www.stormpath.com/docs/libraries/application-rest-url), for
-   example:
+   [Application's Stormpath-specific REST URL](http://docs.stormpath.com/rest/product-guide/#locate-an-applications-rest-url), for example:
 
         stormpathRealm.applicationRestUrl = https://api.stormpath.com/v1/applications/someRandomIdHereReplaceMe
 
