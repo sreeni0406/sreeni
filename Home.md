@@ -23,7 +23,7 @@ with little to no coding on your part.
             <scope>runtime</scope>
         </dependency>
 
-2. Ensure you [have an API Key](http://www.stormpath.com/docs/quickstart/connect) so your application can communicate
+2. Ensure you [have an API Key](http://docs.stormpath.com/rest/quickstart) so your application can communicate
    with Stormpath.  Store your API Key file somewhere secure (readable only by you), for example:
 
         /home/myhomedir/.stormpath/apiKey.properties
