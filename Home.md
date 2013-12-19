@@ -11,8 +11,12 @@ with little to no coding on your part.
 - [Configuration](wiki#configuration)
 - [Authentication](wiki#authentication)
 - [Authorization](wiki#authorization)
-    - [Role Checks](wiki#role-checks)
-    - [Permission Checks](wiki#permission-checks)
+    - [Roles](wiki#role-checks)
+    - [Permissions](wiki#permission-checks)
+        - [Assigning Permissions](wiki#assigning-permissions)
+        - [Checking Permissions](wiki#checking-permissions)
+        - [Permission Storage Details](wiki#permission-storage-details)
+        - [How Permission Checks Work](wiki#how-applicationrealm-permission-checks-work)
 - [Caching](wiki#caching)
 
 ## Configuration ##
