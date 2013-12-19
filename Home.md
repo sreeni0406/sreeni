@@ -11,7 +11,7 @@ with little to no coding on your part.
 - [Configuration](wiki#configuration)
 - [Authentication](wiki#authentication)
 - [Authorization](wiki#authorization)
-    - [Roles](wiki#role-checks)
+    - [Roles](wiki#roles)
     - [Permissions](wiki#permissions)
         - [Assigning Permissions](wiki#assigning-permissions)
         - [Checking Permissions](wiki#checking-permissions)
