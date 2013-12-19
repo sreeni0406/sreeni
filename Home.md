@@ -6,6 +6,15 @@ Pairing Shiro with Stormpath gives you a full application security system comple
 support, authentication, account registration and password reset workflows, password security and more -
 with little to no coding on your part.
 
+*Table of Contents*
+
+- [Configuration](wiki#configuration)
+- [Authentication](wiki#authentication)
+- [Authorization](wiki#authorization)
+    - [Role Checks](wiki#roleChecks)
+    - [Permission Checks](wiki#permissionChecks)
+- [Caching](wiki#caching)
+
 ## Configuration ##
 
 1. Add the stormpath-shiro .jars to your application using Maven, Ant+Ivy, Grails, SBT or whatever
@@ -124,13 +133,102 @@ If the above default role name resolution logic does not meet your needs or if y
 
 ### Permission checks ###
 
-Stormpath does not yet have a permission concept that maps to Shiro's, but you can still resolve a set of Permissions that you want attributed with a Stormpath Group or Stormpath Account by implementing the  `*PermissionResolver` interfaces.  This allows you to call Shiro `subject.isPermitted` methods and have them function correctly based on Stormpath Group or Accounts.
+The 0.5.0 release of the Apache Shiro plugin for Stormpath enabled the ability to assign ad-hoc sets of permissions directly to Stormpath Accounts or Groups using the accounts' or groups' [Custom Data](http://docs.stormpath.com/rest/product-guide/#custom-data) resource.
 
-The `*PermissionResolver` interfaces allow you to simulate full permission associations to Stormpath `Group`s or `Account`s even though Stormpath does not store these permissions directly.  Your `*PermissionResolver` implementation(s) would likely query a data store or file or other mechanism to get assigned permissions for a given Stormpath `Group` or `Account`.
+Once assigned, the Stormpath `ApplicationRealm` will automatically check account and group `CustomData` for permissions to perform Shiro permission checks.
 
-##### How `StormpathRealm` Permission Checks Work #####
+#### Assigning Permissions
 
-The `StormpathRealm` will use any configured `AccountPermissionResolver` and `GroupPermissionResolver` instances to create the aggregate of all permissions attributed to a `Subject` during a permission check.  In other words, the following call:
+The easiest way to assign permissions to an account or group is to get the account or group's `CustomData` resource and use the Shiro Stormpath plugin's `CustomDataPermissionsEditor` to assign or remove permissions.  The following example uses both the Stormpath Java SDK API and the Shiro Stormpath plugin API:
+
+    //Instantiate an account (this is the normal Stormpath Java SDK API):
+    Account acct = client.instantiate(Account.class);
+    String password = "Changeme1!";
+    acct.setUsername("jsmith");
+    acct.setPassword(password);
+    acct.setEmail("jsmith@nowhere.com");
+    acct.setGivenName("Joe");
+    acct.setSurname("Smith");
+    
+    //Now let's add some Shiro permissions to the account's customData:
+    //(this class is in the Shiro Stormpath Plugin API):
+    new CustomDataPermissionsEditor(acct.getCustomData())
+        .append("user:1234:edit")
+        .append("report:create")
+    
+    //Add the new account with its custom data to an application (normal Stormpath Java SDK API):
+    acct = anApplication.createAccount(Accounts.newCreateRequestFor(acct).build());
+
+You can assign permissions to a Group too:
+
+    Group group = client.instantiate(Group.class);
+    group.setName("Users");
+    new CustomDataPermissionsEditor(group.getCustomData()).append("user:login");
+    group = anApplication.createGroup(group)
+
+You might want to assign that account to the group.  *Any permissions assigned to a group are automatically inherited by accounts in the group*:
+
+    group.addAccount(acct);
+
+This is very convenient: You can assign permissions to many accounts simultaneously by simply adding them once to a group that the accounts share.  In doing this, the Stormpath `Group` is acting much more like a Shiro role.
+
+That means, that if the `jsmith` account logs in, you can perform the following Shiro permission check:
+
+    subject.isPermitted("user:login");
+
+And this would return `true`, because, while `user:login` isn't directly assigned to the account, it *is* assigned to one of the account's groups.  Very nice.
+
+#### Checking Permissions
+
+There is nothing special here - you check permissions as you would normally using Shiro:
+
+    subject.isPermitted("whatever:here");
+
+The Stormpath `ApplicationRealm` will automatically know how to determine the permissions assigned to the account to help Shiro give a `true` or `false` answer.  The next sections cover the storage and retrieval details in case you're curious how it works, or if you'd like to customize the behavior or `CustomData` field name.
+
+#### Permission Storage Details
+
+The `CustomDataPermissionsEditor` shown above, and the Shiro Stormpath `ApplicationRealm` default implementation assumes that a default field named `apacheShiroPermissions` can be used to store permissions assigned directly to an account or group.  This implies the customData JSON would look something like this:
+
+    {
+        //any other of your own custom data here
+        "apacheShiroPermissions": [
+            "perm1",
+            "perm2",
+            ...,
+            "permN"
+        ]
+    }
+
+If you wanted to change the name to something else, you could specify the `setFieldName` property on the `CustomDataPermissionsEditor` instance:
+
+    new CustomDataPermissionsEditor(group.getCustomData())
+        .setFieldName("whateverYouWantHere")
+        .append("user:login");
+
+and this would result in the following JSON structure instead:
+
+    {
+        //any other of your own custom data here
+        "whateverYouWantHere": [
+            "user:login",
+        ]
+    }
+
+But *NOTE*: While the `CustomDataPermissionsEditor` implementation will modify the field name you specify, the, `ApplicationRealm` needs to read that same field during permission checks.  So if you change it as shown above, you must also change the realm's configuration to reference the new name as well:
+
+    [main]
+    ...
+    stormpathRealm.groupPermissionResolver.customDataFieldName = whateverYouWantHere
+    stormpathRealm.accountPermissionResolver.customDataFieldName = whateverYouWantHere
+
+This section explained the default implementation strategy for storing and checking permissions, using CustomData.  You can use this immediately, as it is the default behavior, and it should suit 95% of all use cases.
+
+However, if you need another approach, you can fully customize how permissions are resolved for a given account or group by customizing the `ApplicationRealm`'s `accountPermissionResolver` and `groupPermissionResolver` properties, described next.
+
+##### How `ApplicationRealm` Permission Checks Work #####
+
+The Stormpath `ApplicationRealm` will use any configured `AccountPermissionResolver` and `GroupPermissionResolver` instances to create the aggregate of all permissions attributed to a `Subject` during a permission check.  In other words, the following call:
 
     subject.isPermitted(aPermission)
 
@@ -162,7 +260,7 @@ For further clarity, the `isPermitted` check works something like this (simplifi
     //otherwise not permitted:
     return false;
 
-#### AccountPermissionResolver ####
+###### AccountPermissionResolver
 
 The StormpathRealm's `AccountPermissionResolver` inspects a Stormpath `Account` and returns a set of Shiro `Permission`s that are considered directly assigned to that `Account`.
 
@@ -184,7 +282,7 @@ After you've configured this you can perform permission checks.  For example, pe
 
 This check would succeed if the `MyAccountPermissionResolver` implementation returned that permission for the Subject's backing `Account`.
 
-#### GroupPermissionResolver ####
+###### GroupPermissionResolver
 
 The StormpathRealm's `GroupPermissionResolver` inspects a Stormpath `Group` and returns a set of Shiro `Permission`s that are considered assigned to that `Group`.
 
