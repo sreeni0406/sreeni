@@ -208,7 +208,7 @@ This check would succeed if the Subject's direct permissions _or any of its Grou
 
 Reducing round-trips to the Stormpath API servers can be a beneficial performance boost, so you will likely want to enable caching.  
 
-The <a href="#configuration">Configuration</a> section example already shows caching being used, so if you copied that, you should be good to go - you don't need to configure anything additional.  However, if you are interested in what is going on, keep reading.
+The <a href="wiki#configuration">Configuration</a> section example already shows caching being used, so if you copied that, you should be good to go - you don't need to configure anything additional.  However, if you are interested in what is going on, keep reading.
 
 Shiro has its own Caching support that allows you to plug in to existing caching products (Hazelcast, Ehcache, etc).  The Stormpath Java SDK also has an identical concept for Stormpath users that don't rely on Shiro.
 
