@@ -12,6 +12,9 @@ with little to no coding on your part.
 - [Authentication](wiki#authentication)
 - [Authorization](wiki#authorization)
     - [Roles](wiki#roles)
+        - [Assigning Roles](wiki#assigning-roles)
+        - [Checking Roles with the Group `href`](wiki#role-checks-with-the-group-href)
+        - [Checking Roles with the Group `name`](wiki#role-checks-with-the-group-name)
     - [Permissions](wiki#permissions)
         - [Assigning Permissions](wiki#assigning-permissions)
         - [Checking Permissions](wiki#checking-permissions)
@@ -92,6 +95,21 @@ After an account has authenticated, you can perform standard Shiro role and perm
 ### Roles ###
 
 Shiro's role concept in Stormpath is represented as a Stormpath [Group](http://www.stormpath.com/docs/java/product-guide#Groups).
+
+#### Assigning Roles
+
+Because Shiro roles are represented as Groups in Stormpath, you assign a role to an account simply by adding an account to a group (or by adding a group to an account, depending on how you look at it).  For example:
+
+```java
+Account account = client.getResource(accountHref, Account.class);
+Group group = client.getResource(groupHref, Group.class);
+
+//assign the account to the group:
+group.addAccount(account);
+
+//this would have achieved the same thing:
+//    account.addGroup(group);
+```
 
 #### Role checks with the Group `href` ####
 
