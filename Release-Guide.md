@@ -10,36 +10,39 @@ All of Stormpath's JVM-based open-source projects are released to Maven Central 
 - You have [created your GPG keys](https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven#HowToGeneratePGPSignaturesWithMaven-GenerateaKeyPair) and [distributed your public key](https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven#HowToGeneratePGPSignaturesWithMaven-DistributeYourPublicKey) (note that if you used `brew install gpg2` as recommended, the executable for these commands is `gpg2` and _not_ `gpg`).
 - You have [created a Sonatype OSS issues account](https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-2.Signup) and that account has been granted release permissions to the Sonatype OSS repository for Stormpath.  If you do not yet have permissions and you believe you should, [open a GitHub Issue and request it](https://github.com/stormpath/stormpath-shiro/issues) and we'll work with Sonatype to grant you those permissions if you should have them.
 - You have configured `$HOME/.m2/settings.xml` and added the following profiles:
-
-        <profile>
-            <id>stormpath-signature</id>
-            <properties>
-                <gpg.executable>gpg2</gpg.executable>
-                <gpg.keyname>YOUR_GPG_KEY_NAME</gpg.keyname>
-                <gpg.passphrase>YOUR_GPG_PASSPHRASE</gpg.passphrase>
-            </properties>
-        </profile>
-        <profile>
-            <id>sonatype-oss-release</id>
-            <properties>
-                <gpg.executable>gpg2</gpg.executable>
-                <gpg.keyname>YOUR_GPG_KEY_NAME</gpg.keyname>
-                <gpg.passphrase>YOUR_GPG_PASSPHRASE</gpg.passphrase>
-            </properties>
-        </profile>
+```xml
+<profile>
+    <id>stormpath-signature</id>
+    <properties>
+        <gpg.executable>gpg2</gpg.executable>
+        <gpg.keyname>YOUR_GPG_KEY_NAME</gpg.keyname>
+        <gpg.passphrase>YOUR_GPG_PASSPHRASE</gpg.passphrase>
+    </properties>
+</profile>
+<profile>
+    <id>sonatype-oss-release</id>
+    <properties>
+        <gpg.executable>gpg2</gpg.executable>
+        <gpg.keyname>YOUR_GPG_KEY_NAME</gpg.keyname>
+        <gpg.passphrase>YOUR_GPG_PASSPHRASE</gpg.passphrase>
+    </properties>
+</profile>
+```
 where `YOUR_GPG_KEY_NAME` is the key name you gave the key when you created it and `YOUR_GPG_PASSPHRASE` is the passphrase you used when you created the key.
 
     NOTE: adding these lines is a security risk if your `$HOME/.m2/settings.xml` file is readable by anyone other than you! Ensure you've protected that file, e.g.
-
-        chmod go-rwx $HOME/.m2/settings.xml
+```bash
+chmod go-rwx $HOME/.m2/settings.xml
+```
     Again, the `gpg.executable` name of `gpg2` assumes you used `brew install gpg2`.
 - You have enabled both of these profiles under the `<activeProfiles>` element:
-
-        <activeProfiles>
-            <activeProfile>sonatype-oss-release</activeProfile>
-            <activeProfile>stormpath-signature</activeProfile>
-            ...
-        </activeProfiles>
+```xml
+<activeProfiles>
+    <activeProfile>sonatype-oss-release</activeProfile>
+    <activeProfile>stormpath-signature</activeProfile>
+    <!-- any others: -->
+</activeProfiles>
+```
 
 ## Pre-release Verification
 
@@ -54,15 +57,16 @@ where `YOUR_GPG_KEY_NAME` is the key name you gave the key when you created it a
 ## Perform the Release
 
 1. After the above prerequisites have been satisfied and you have performed the pre-release verification, run the following on the command line:
-
-        git checkout master
-        # ensure git status reports no changes
-        git status
-        # assuming no reported changes:
-        mvn clean
-        mvn release:clean
-        # assuming no build errors:
-        mvn release:prepare
+```bash
+git checkout master
+# ensure git status reports no changes:
+git status
+# assuming no reported changes:
+mvn clean
+mvn release:clean
+# assuming no build errors:
+mvn release:prepare
+```
 
     Enter the release version and the SCM release tag / label.  Often retaining the defaults and hitting enter is a viable option *IF* you know for sure you do not need to change them: 
 
@@ -77,9 +81,9 @@ where `YOUR_GPG_KEY_NAME` is the key name you gave the key when you created it a
     Ok, continuing on.  
 
 2. Assuming the previous build commands did not result in errors:
-
-        mvn release:perform
-
+```bash
+mvn release:perform
+```
     This will build the final versioned artifacts and upload them to the Sonatype OSS repository server in a _staging_ repository.  This is called a _[staged release](https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7a.3.StageaRelease)_ - it is not yet available to the world.
 
     A staged release is fully 'done' as far as the build process is concerned, but the staged artifacts will not be released to the world in Maven Central until we log in to the repository user interface and manually execute this behavior.
@@ -113,7 +117,7 @@ Example email template:
     
     Hi everyone,
     
-    We are pleased to announce that the version 0.5.0 of the Apache Shiro plugin for Stormpath has been released!
+    I am pleased to announce that the version 0.5.0 of the Apache Shiro plugin for Stormpath has been released!
 
     This is a bugfix point release that resolves 1 issue: https://github.com/stormpath/stormpath-shiro/issues?milestone=1    
     Project documentation is here: https://github.com/stormpath/stormpath-shiro/wiki
@@ -123,7 +127,7 @@ Example email template:
     
     Cheers,
     
-    Les
+    Your Name
 
 - Close the [milestone](https://github.com/stormpath/stormpath-shiro/issues/milestones) that represents the just-released version.
 
