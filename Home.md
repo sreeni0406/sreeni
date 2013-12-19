@@ -12,11 +12,11 @@ with little to no coding on your part.
 - [Authentication](wiki#authentication)
 - [Authorization](wiki#authorization)
     - [Roles](wiki#role-checks)
-    - [Permissions](wiki#permission-checks)
+    - [Permissions](wiki#permissions)
         - [Assigning Permissions](wiki#assigning-permissions)
         - [Checking Permissions](wiki#checking-permissions)
-        - [Permission Storage Details](wiki#permission-storage-details)
-        - [How Permission Checks Work](wiki#how-applicationrealm-permission-checks-work)
+        - [Permission Storage](wiki#permission-storage)
+        - [How Permission Checks Work](wiki#how-permission-checks-work)
 - [Caching](wiki#caching)
 
 ## Configuration ##
@@ -89,7 +89,7 @@ In Stormpath, you can add, remove and enable accounts for your application and S
 
 After an account has authenticated, you can perform standard Shiro role and permission checks, e.g. `subject.hasRole(roleName)` and `subject.isPermitted(permission)`.
 
-### Role checks ###
+### Roles ###
 
 Shiro's role concept in Stormpath is represented as a Stormpath [Group](http://www.stormpath.com/docs/java/product-guide#Groups).
 
@@ -135,7 +135,7 @@ If the above default role name resolution logic does not meet your needs or if y
     groupRoleResolver = com.mycompany.my.impl.MyGroupRoleResolver
     stormpathRealm.groupRoleResolver = $groupRoleResolver
 
-### Permission checks ###
+### Permissions ###
 
 The 0.5.0 release of the Apache Shiro plugin for Stormpath enabled the ability to assign ad-hoc sets of permissions directly to Stormpath Accounts or Groups using the accounts' or groups' [Custom Data](http://docs.stormpath.com/rest/product-guide/#custom-data) resource.
 
@@ -190,7 +190,7 @@ There is nothing special here - you check permissions as you would normally usin
 
 The Stormpath `ApplicationRealm` will automatically know how to determine the permissions assigned to the account to help Shiro give a `true` or `false` answer.  The next sections cover the storage and retrieval details in case you're curious how it works, or if you'd like to customize the behavior or `CustomData` field name.
 
-#### Permission Storage Details
+#### Permission Storage
 
 The `CustomDataPermissionsEditor` shown above, and the Shiro Stormpath `ApplicationRealm` default implementation assumes that a default field named `apacheShiroPermissions` can be used to store permissions assigned directly to an account or group.  This implies the customData JSON would look something like this:
 
@@ -230,7 +230,7 @@ This section explained the default implementation strategy for storing and check
 
 However, if you need another approach, you can fully customize how permissions are resolved for a given account or group by customizing the `ApplicationRealm`'s `accountPermissionResolver` and `groupPermissionResolver` properties, described next.
 
-##### How `ApplicationRealm` Permission Checks Work #####
+##### How Permission Checks Work #####
 
 The Stormpath `ApplicationRealm` will use any configured `AccountPermissionResolver` and `GroupPermissionResolver` instances to create the aggregate of all permissions attributed to a `Subject` during a permission check.  In other words, the following call:
 
