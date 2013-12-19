@@ -23,46 +23,45 @@ with little to no coding on your part.
 
 1. Add the stormpath-shiro .jars to your application using Maven, Ant+Ivy, Grails, SBT or whatever
    maven-compatible tool you prefer:
-
-        <dependency>
-            <groupId>com.stormpath.shiro</groupId>
-            <artifactId>stormpath-shiro-core</artifactId>
-            <version>0.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.stormpath.sdk</groupId>
-            <artifactId>stormpath-sdk-httpclient</artifactId>
-            <version>0.9.1</version>
-            <scope>runtime</scope>
-        </dependency>
-
+```xml
+<dependency>
+    <groupId>com.stormpath.shiro</groupId>
+    <artifactId>stormpath-shiro-core</artifactId>
+    <version>0.5.0</version>
+</dependency>
+<dependency>
+    <groupId>com.stormpath.sdk</groupId>
+    <artifactId>stormpath-sdk-httpclient</artifactId>
+    <version>0.9.1</version>
+    <scope>runtime</scope>
+</dependency>
+```
 2. Ensure you [have an API Key](http://docs.stormpath.com/rest/quickstart) so your application can communicate
    with Stormpath.  Store your API Key file somewhere secure (readable only by you), for example:
 
         /home/myhomedir/.stormpath/apiKey.properties
 
 3. Configure `shiro.ini` with the Stormpath `ApplicationRealm`:
+```ini
+[main]
 
-        [main]
-        ...
-        stormpathClient = com.stormpath.shiro.client.ClientFactory
-        # Replace this value with the file location from #2 above:
-        stormpathClient.apiKeyFileLocation = /home/myhomedir/.stormpath/apiKey.properties
-        # If you've configured a Shiro CacheManager (recommended to reduce network calls):
-        stormpathClient.cacheManager = $cacheManager
+stormpathClient = com.stormpath.shiro.client.ClientFactory
+; Replace this value with the file location from #2 above:
+stormpathClient.apiKeyFileLocation = /home/myhomedir/.stormpath/apiKey.properties
+; If you've configured a Shiro CacheManager (recommended to reduce network calls):
+stormpathClient.cacheManager = $cacheManager
 
-        stormpathRealm = com.stormpath.shiro.realm.ApplicationRealm
-        stormpathRealm.client = $stormpathClient
-        stormpathRealm.applicationRestUrl = REPLACE_ME_WITH_YOUR_STORMPATH_APP_REST_URL
+stormpathRealm = com.stormpath.shiro.realm.ApplicationRealm
+stormpathRealm.client = $stormpathClient
+stormpathRealm.applicationRestUrl = REPLACE_ME_WITH_YOUR_STORMPATH_APP_REST_URL
 
-        securityManager.realm = $stormpathRealm
-
+securityManager.realm = $stormpathRealm
+```
 4. Replace the `stormpathRealm.applicationRestUrl` value above with your
    [Application's Stormpath-specific REST URL](http://docs.stormpath.com/rest/product-guide/#locate-an-applications-rest-url), for example:
-
-        stormpathRealm.applicationRestUrl = https://api.stormpath.com/v1/applications/someRandomIdHereReplaceMe
-
-
+```ini
+stormpathRealm.applicationRestUrl = https://api.stormpath.com/v1/applications/someRandomIdHereReplaceMe
+```
 
 ## Authentication ##
 
@@ -72,15 +71,16 @@ However, if you want to execute the authentication attempt yourself (e.g. you ha
 
 Create a Shiro `UsernamePasswordToken` to wrap your user's submitted username and password and then call Shiro's `Subject.login` method:
 
-    String username = //get from a form or request parameter (OVER SSL!)
-    String password = //get from a form or request parameter (OVER SSL!)
-    String host = //end-user's host IP for auditing, e.g. servletRequest.getRemoteHost();
+```java
+String username = //get from a form or request parameter (OVER SSL!)
+String password = //get from a form or request parameter (OVER SSL!)
+String host = //end-user's host IP for auditing, e.g. servletRequest.getRemoteHost();
 
-    UsernamePasswordToken token = new UsernamePasswordToken(username, password, host);
+UsernamePasswordToken token = new UsernamePasswordToken(username, password, host);
 
-    Subject currentUser = SecurityUtils.getSubject();
-    currentUser.login(token);
-
+Subject currentUser = SecurityUtils.getSubject();
+currentUser.login(token);
+```
 that's it - a standard Shiro authentication attempt.  If the authentication attempt fails, an `AuthenticationException` will be thrown as expected.
 
 In Stormpath, you can add, remove and enable accounts for your application and Shiro reflects these changes instantly!
@@ -102,11 +102,12 @@ While it is possible (and maybe more intuitive) to use the Group name for the ro
 Instead, it is recommended to perform role checks with a stable identifier.
 
 You can use a Stormpath Group's `href` property as the role 'name' and check that:
-
-    String groupHref = stormpathGroup.getHref();
-    if (subject.hasRole(groupHref)) { 
-        //do something 
-    }
+```java
+String groupHref = stormpathGroup.getHref();
+if (subject.hasRole(groupHref)) { 
+    //do something 
+}
+```
 
 #### Role checks with the Group `name` ####
 
@@ -114,11 +115,13 @@ If you still want to use a Stormpath Group's name as the Shiro role name for rol
 
 In your `shiro.ini` (or compatible configuration mechanism), you can set the supported naming modes of what will be represented as a Shiro role:
 
-    [main]
-    ...
-    groupRoleResolver = com.stormpath.shiro.realm.DefaultGroupRoleResolver
-    groupRoleResolver.setModeNames = NAME
-    stormpathRealm.groupRoleResolver = $groupRoleResolver
+```ini
+[main]
+; ... continued ...
+groupRoleResolver = com.stormpath.shiro.realm.DefaultGroupRoleResolver
+groupRoleResolver.setModeNames = NAME
+stormpathRealm.groupRoleResolver = $groupRoleResolver
+```
 
 The modes (or mode names) allow you to specify which Group properties Shiro will consider as role 'names'.  The default is `href`, but you can specify more than one if desired.  The supported modes are the following:
 
@@ -130,10 +133,12 @@ The modes (or mode names) allow you to specify which Group properties Shiro will
 
 If the above default role name resolution logic does not meet your needs or if you want full customization of how a Stormpath Group resolves to one or more Shiro role names, you can implement the `GroupRoleResolver` interface and configure the implementation on the StormpathRealm:
 
-    [main]
-    ...
-    groupRoleResolver = com.mycompany.my.impl.MyGroupRoleResolver
-    stormpathRealm.groupRoleResolver = $groupRoleResolver
+```ini
+[main]
+; ... continued ...
+groupRoleResolver = com.mycompany.my.impl.MyGroupRoleResolver
+stormpathRealm.groupRoleResolver = $groupRoleResolver
+```
 
 ### Permissions ###
 
@@ -145,40 +150,47 @@ Once assigned, the Stormpath `ApplicationRealm` will automatically check account
 
 The easiest way to assign permissions to an account or group is to get the account or group's `CustomData` resource and use the Shiro Stormpath plugin's `CustomDataPermissionsEditor` to assign or remove permissions.  The following example uses both the Stormpath Java SDK API and the Shiro Stormpath plugin API:
 
-    //Instantiate an account (this is the normal Stormpath Java SDK API):
-    Account acct = client.instantiate(Account.class);
-    String password = "Changeme1!";
-    acct.setUsername("jsmith");
-    acct.setPassword(password);
-    acct.setEmail("jsmith@nowhere.com");
-    acct.setGivenName("Joe");
-    acct.setSurname("Smith");
+```java
+//Instantiate an account (this is the normal Stormpath Java SDK API):
+Account acct = client.instantiate(Account.class);
+String password = "Changeme1!";
+acct.setUsername("jsmith");
+acct.setPassword(password);
+acct.setEmail("jsmith@nowhere.com");
+acct.setGivenName("Joe");
+acct.setSurname("Smith");
     
-    //Now let's add some Shiro permissions to the account's customData:
-    //(this class is in the Shiro Stormpath Plugin API):
-    new CustomDataPermissionsEditor(acct.getCustomData())
-        .append("user:1234:edit")
-        .append("report:create")
+//Now let's add some Shiro permissions to the account's customData:
+//(this class is in the Shiro Stormpath Plugin API):
+new CustomDataPermissionsEditor(acct.getCustomData())
+    .append("user:1234:edit")
+    .append("report:create")
     
-    //Add the new account with its custom data to an application (normal Stormpath Java SDK API):
-    acct = anApplication.createAccount(Accounts.newCreateRequestFor(acct).build());
-
+//Add the new account with its custom data to an application (normal Stormpath Java SDK API):
+acct = anApplication.createAccount(Accounts.newCreateRequestFor(acct).build());
+```
 You can assign permissions to a Group too:
 
-    Group group = client.instantiate(Group.class);
-    group.setName("Users");
-    new CustomDataPermissionsEditor(group.getCustomData()).append("user:login");
-    group = anApplication.createGroup(group)
+```java
+Group group = client.instantiate(Group.class);
+group.setName("Users");
+new CustomDataPermissionsEditor(group.getCustomData()).append("user:login");
+group = anApplication.createGroup(group)
+```
 
 You might want to assign that account to the group.  *Any permissions assigned to a group are automatically inherited by accounts in the group*:
 
-    group.addAccount(acct);
+```java
+group.addAccount(acct);
+```
 
 This is very convenient: You can assign permissions to many accounts simultaneously by simply adding them once to a group that the accounts share.  In doing this, the Stormpath `Group` is acting much more like a Shiro role.
 
 That means, that if the `jsmith` account logs in, you can perform the following Shiro permission check:
 
-    subject.isPermitted("user:login");
+```java
+subject.isPermitted("user:login");
+```
 
 And this would return `true`, because, while `user:login` isn't directly assigned to the account, it *is* assigned to one of the account's groups.  Very nice.
 
@@ -186,7 +198,9 @@ And this would return `true`, because, while `user:login` isn't directly assigne
 
 There is nothing special here - you check permissions as you would normally using Shiro:
 
-    subject.isPermitted("whatever:here");
+```java
+subject.isPermitted("whatever:here");
+```
 
 The Stormpath `ApplicationRealm` will automatically know how to determine the permissions assigned to the account to help Shiro give a `true` or `false` answer.  The next sections cover the storage and retrieval details in case you're curious how it works, or if you'd like to customize the behavior or `CustomData` field name.
 
@@ -194,37 +208,41 @@ The Stormpath `ApplicationRealm` will automatically know how to determine the pe
 
 The `CustomDataPermissionsEditor` shown above, and the Shiro Stormpath `ApplicationRealm` default implementation assumes that a default field named `apacheShiroPermissions` in an account's or group's `CustomData` resource can be used to store permissions assigned directly to the account or group.  This implies the `CustomData` resource's JSON would look something like this:
 
-    {
-        //any other of your own custom data here
-        "apacheShiroPermissions": [
-            "perm1",
-            "perm2",
-            ...,
-            "permN"
-        ]
-    }
+```json
+{
+    "apacheShiroPermissions": [
+        "perm1",
+        "perm2",
+        "permN"
+    ]
+}
+```
 
 If you wanted to change the name to something else, you could specify the `setFieldName` property on the `CustomDataPermissionsEditor` instance:
 
-    new CustomDataPermissionsEditor(group.getCustomData())
-        .setFieldName("whateverYouWantHere")
-        .append("user:login");
-
+```java
+new CustomDataPermissionsEditor(group.getCustomData())
+    .setFieldName("whateverYouWantHere")
+    .append("user:login");
+```
 and this would result in the following JSON structure instead:
 
-    {
-        //any other of your own custom data here
-        "whateverYouWantHere": [
-            "user:login",
-        ]
-    }
+```json
+{
+    "whateverYouWantHere": [
+        "user:login",
+    ]
+}
+```
 
 But *NOTE*: While the `CustomDataPermissionsEditor` implementation will modify the field name you specify, the, `ApplicationRealm` needs to read that same field during permission checks.  So if you change it as shown above, you must also change the realm's configuration to reference the new name as well:
 
-    [main]
-    ...
-    stormpathRealm.groupPermissionResolver.customDataFieldName = whateverYouWantHere
-    stormpathRealm.accountPermissionResolver.customDataFieldName = whateverYouWantHere
+```ini
+[main]
+; ... continued ...
+stormpathRealm.groupPermissionResolver.customDataFieldName = whateverYouWantHere
+stormpathRealm.accountPermissionResolver.customDataFieldName = whateverYouWantHere
+```
 
 This section explained the default implementation strategy for storing and checking permissions, using CustomData.  You can use this immediately, as it is the default behavior, and it should suit 95% of all use cases.
 
@@ -234,7 +252,9 @@ However, if you need another approach, you can fully customize how permissions a
 
 The Stormpath `ApplicationRealm` will use any configured `AccountPermissionResolver` and `GroupPermissionResolver` instances to create the aggregate of all permissions attributed to a `Subject` during a permission check.  In other words, the following call:
 
-    subject.isPermitted(aPermission)
+```java
+subject.isPermitted(aPermission)
+```
 
 will return `true` if the following is true:
 
@@ -245,24 +265,26 @@ will return `true` if the following is true:
 
 For further clarity, the `isPermitted` check works something like this (simplified for brevity):
 
-    Set<Permission> accountPermissions = accountPermissionResolver.resolvePermissions(account);
-    for (Permission accountPermission : accountPermissions) {
-        if (accountPermission.implies(permissionToCheck)) {
+```java
+Set<Permission> accountPermissions = accountPermissionResolver.resolvePermissions(account);
+for (Permission accountPermission : accountPermissions) {
+    if (accountPermission.implies(permissionToCheck)) {
+        return true;
+    }
+}
+
+for (Group group : account.getGroups()) {
+    Set<Permission> groupPermissions = resolvePermissions(group);
+    for (Permission groupPermission : groupPermissions) {
+        if (groupPermission.implies(permissionToCheck)) {
             return true;
         }
     }
- 
-    for (Group group : account.getGroups()) {
-        Set<Permission> groupPermissions = resolvePermissions(group);
-        for (Permission groupPermission : groupPermissions) {
-            if (groupPermission.implies(permissionToCheck)) {
-                return true;
-            }
-        }
-    }
+}
 
-    //otherwise not permitted:
-    return false;
+//otherwise not permitted:
+return false;
+```
 
 ###### AccountPermissionResolver
 
@@ -272,17 +294,21 @@ This interface is provided to resolve permissions that are _directly_ assigned t
 
 Your `AccountPermissionResolver` implementation could then be configured on the StormpathRealm instance.  For example, in `shiro.ini`:
 
-    [main]
-    ...
-    accountPermissionResolver = com.mycompany.stormpath.shiro.MyAccountPermissionResolver
-    stormpathRealm.accountPermissionResolver = $accountPermissionResolver
+```ini
+[main]
+; ...
+accountPermissionResolver = com.mycompany.stormpath.shiro.MyAccountPermissionResolver
+stormpathRealm.accountPermissionResolver = $accountPermissionResolver
+```
 
 After you've configured this you can perform permission checks.  For example, perhaps you want to check if the current account is allowed to update their own information:
 
-    String updateSelf = "account:" + subject.getPrincipal() + ":update";
-    if (subject.isPermitted(updateSelf)) {
-        //do something
-    }
+```java
+String updateSelf = "account:" + subject.getPrincipal() + ":update";
+if (subject.isPermitted(updateSelf)) {
+    //do something
+}
+```
 
 This check would succeed if the `MyAccountPermissionResolver` implementation returned that permission for the Subject's backing `Account`.
 
@@ -292,17 +318,21 @@ The StormpathRealm's `GroupPermissionResolver` inspects a Stormpath `Group` and 
 
 You can configure a custom `GroupPermissionResolver` implementation on the StormpathRealm instance.  For example, in `shiro.ini`:
 
-    [main]
-    ...
-    groupPermissionResolver = com.mycompany.stormpath.shiro.MyGroupPermissionResolver
-    stormpathRealm.groupPermissionResolver = $groupPermissionResolver
+```ini
+[main]
+; ...
+groupPermissionResolver = com.mycompany.stormpath.shiro.MyGroupPermissionResolver
+stormpathRealm.groupPermissionResolver = $groupPermissionResolver
+```
 
 After you've configured this you can perform group permission checks.  For example, perhaps you want to check if the current Subject is allowed to edit a specific blog article:
 
-    String editArticle = "blogArticle:" + article.getId() + ":edit";
-    if (subject.isPermitted(editArticle)) {
-        //do something
-    }
+```java
+String editArticle = "blogArticle:" + article.getId() + ":edit";
+if (subject.isPermitted(editArticle)) {
+    //do something
+}
+```
 
 This check would succeed if the Subject's direct permissions _or any of its Groups' permissions_ (as returned by the `MyGroupPermissionResolver` implementation) implied the 'editArticle` permission.
 
@@ -318,23 +348,27 @@ Instead of having to configure two caching mechanisms in your Shiro-enabled app 
 
 To enable this 'bridge' support, for example, in `shiro.ini` (or the Spring, Guice or CDI equivalent):
 
-    [main]
-    
-    # Enable whatever Shiro CacheManager implementation you want:
-    cacheManager = my.shiro.CacheManagerImplementation
-    securityManager.cacheManager = $cacheManager
+```ini
+[main]
 
-    # Stormpath integration:
-    stormpathClient = com.stormpath.shiro.client.ClientFactory
-    # Tell the stormpath client to use the same Shiro CacheManager:
-    stormpathClient.cacheManager = $cacheManager
+; Enable whatever Shiro CacheManager implementation you want:
+cacheManager = my.shiro.CacheManagerImplementation
+securityManager.cacheManager = $cacheManager
+
+; Stormpath integration:
+stormpathClient = com.stormpath.shiro.client.ClientFactory
+; Tell the stormpath client to use the same Shiro CacheManager:
+stormpathClient.cacheManager = $cacheManager
+```
 
 If for some reason you _don't_ want the Stormpath SDK to use Shiro's caching mechanism, you can configure the `stormpathCacheManager` property (instead of the expected Shiro-specific `cacheManager` property), which accepts a `com.stormpath.sdk.cache.CacheManager` instance instead:
 
-    # ...
-    stormpathCacheManager = my.com.stormpath.sdk.cache.CacheManagerImplementation
-    # etc...
-    stormpathClient.stormpathCacheManager = $stormpathCacheManager
+```ini
+; ...
+stormpathCacheManager = my.com.stormpath.sdk.cache.CacheManagerImplementation
+; etc ...
+stormpathClient.stormpathCacheManager = $stormpathCacheManager
+```
 
 But note this approach requires you to set-up/configure two separate caching mechanisms.
 
