@@ -49,6 +49,8 @@ with little to no coding on your part.
 
         stormpathRealm.applicationRestUrl = https://api.stormpath.com/v1/applications/someRandomIdHereReplaceMe
 
+
+
 ## Authentication ##
 
 In a web application, you can use one of Shiro's existing authentication filters to automatically handle authentication requests (e.g. [BasicHttpAuthenticationFilter](http://shiro.apache.org/static/current/apidocs/org/apache/shiro/web/filter/authc/BasicHttpAuthenticationFilter.html), [FormAuthenticationFilter](http://shiro.apache.org/static/current/apidocs/org/apache/shiro/web/filter/authc/FormAuthenticationFilter.html)) and you won't have to code anything - authentication attempts will be processed as expected by the `StormpathRealm` automatically.
@@ -201,3 +203,35 @@ After you've configured this you can perform group permission checks.  For examp
     }
 
 This check would succeed if the Subject's direct permissions _or any of its Groups' permissions_ (as returned by the `MyGroupPermissionResolver` implementation) implied the 'editArticle` permission.
+
+## Caching
+
+Reducing round-trips to the Stormpath API servers can be a beneficial performance boost, so you will likely want to enable caching.  The [Configuration](#configuration) section example already shows caching being used, so if you copied that, you should be good to go - you don't need to configure anything additional.  However, if you are interested in what is going on, keep reading.
+
+Shiro has its own Caching support that allows you to plug in to existing caching products (Hazelcast, Ehcache, etc).  The Stormpath Java SDK also has an identical concept for Stormpath users that don't rely on Shiro.
+
+Instead of having to configure two caching mechanisms in your Shiro-enabled app (one for Shiro, and another separate one for the Stormpath Java SDK), the Apache Shiro plugin for Stormpath has a caching implementation that uses the Stormpath Java SDK caching API to 'wrap' or 'bridge' the Shiro caching API.  This means you can tell the Stormpath Java SDK to use the same `CacheManager` that Shiro uses, allowing you to use a single cache system for all of your application's needs.
+
+To enable this 'bridge' support, for example, in `shiro.ini` (or the Spring, Guice or CDI equivalent):
+
+    [main]
+    
+    # Enable whatever Shiro CacheManager implementation you want:
+    cacheManager = my.shiro.CacheManagerImplementation
+    securityManager.cacheManager = $cacheManager
+
+    # Stormpath integration:
+    stormpathClient = com.stormpath.shiro.client.ClientFactory
+    # Tell the stormpath client to use the same Shiro CacheManager:
+    stormpathClient.cacheManager = $cacheManager
+
+If for some reason you _don't_ want the Stormpath SDK to use Shiro's caching mechanism, you can configure the `stormpathCacheManager` property (instead of the expected Shiro-specific `cacheManager` property), which accepts a `com.stormpath.sdk.cache.CacheManager` instance instead:
+
+    # ...
+    stormpathCacheManager = my.com.stormpath.sdk.cache.CacheManagerImplementation
+    # etc...
+    stormpathClient.stormpathCacheManager = $stormpathCacheManager
+
+But note this approach requires you to set-up/configure two separate caching mechanisms.
+
+See `ClientFactory` `setCacheManager` and `setStormpathCacheManager` JavaDoc for more.
