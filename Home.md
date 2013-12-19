@@ -14,12 +14,12 @@ with little to no coding on your part.
         <dependency>
             <groupId>com.stormpath.shiro</groupId>
             <artifactId>stormpath-shiro-core</artifactId>
-            <version>0.4.0</version>
+            <version>0.5.0</version>
         </dependency>
         <dependency>
             <groupId>com.stormpath.sdk</groupId>
             <artifactId>stormpath-sdk-httpclient</artifactId>
-            <version>0.8.1</version>
+            <version>0.9.1</version>
             <scope>runtime</scope>
         </dependency>
 
