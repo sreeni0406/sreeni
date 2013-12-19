@@ -192,7 +192,7 @@ The Stormpath `ApplicationRealm` will automatically know how to determine the pe
 
 #### Permission Storage
 
-The `CustomDataPermissionsEditor` shown above, and the Shiro Stormpath `ApplicationRealm` default implementation assumes that a default field named `apacheShiroPermissions` can be used to store permissions assigned directly to an account or group.  This implies the customData JSON would look something like this:
+The `CustomDataPermissionsEditor` shown above, and the Shiro Stormpath `ApplicationRealm` default implementation assumes that a default field named `apacheShiroPermissions` in an account's or group's `CustomData` resource can be used to store permissions assigned directly to the account or group.  This implies the customData JSON would look something like this:
 
     {
         //any other of your own custom data here
