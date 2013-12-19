@@ -13,8 +13,7 @@ with little to no coding on your part.
 - [Authorization](wiki#authorization)
     - [Roles](wiki#roles)
         - [Assigning Roles](wiki#assigning-roles)
-        - [Checking Roles with the Group `href`](wiki#role-checks-with-the-group-href)
-        - [Checking Roles with the Group `name`](wiki#role-checks-with-the-group-name)
+        - [Checking Roles](wiki#checking-roles)
     - [Permissions](wiki#permissions)
         - [Assigning Permissions](wiki#assigning-permissions)
         - [Checking Permissions](wiki#checking-permissions)
@@ -111,7 +110,9 @@ group.addAccount(account);
 //    account.addGroup(group);
 ```
 
-#### Role checks with the Group `href` ####
+#### Checking Roles
+
+##### Role checks with the Group `href`
 
 The recommended way to perform a Shiro role check is to use the Stormpath group's `href` property as the Shiro role 'name'.  
 
@@ -127,7 +128,7 @@ if (subject.hasRole(groupHref)) {
 }
 ```
 
-#### Role checks with the Group `name` ####
+##### Role checks with the Group `name`
 
 If you still want to use a Stormpath Group's name as the Shiro role name for role checks - perhaps because you have a high level of confidence that no one will change group names once your software is written - you can still use the Group name if you wish by adding a little configuration.
 
