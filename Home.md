@@ -8,18 +8,18 @@ with little to no coding on your part.
 
 *Table of Contents*
 
-- [Configuration](wiki#configuration)
-- [Authentication](wiki#authentication)
-- [Authorization](wiki#authorization)
-    - [Roles](wiki#roles)
-        - [Assigning Roles](wiki#assigning-roles)
-        - [Checking Roles](wiki#checking-roles)
-    - [Permissions](wiki#permissions)
-        - [Assigning Permissions](wiki#assigning-permissions)
-        - [Checking Permissions](wiki#checking-permissions)
-        - [Permission Storage](wiki#permission-storage)
-        - [How Permission Checks Work](wiki#how-permission-checks-work)
-- [Caching](wiki#caching)
+- [Configuration](#configuration)
+- [Authentication](#authentication)
+- [Authorization](#authorization)
+    - [Roles](#roles)
+        - [Assigning Roles](#assigning-roles)
+        - [Checking Roles](#checking-roles)
+    - [Permissions](#permissions)
+        - [Assigning Permissions](#assigning-permissions)
+        - [Checking Permissions](#checking-permissions)
+        - [Permission Storage](#permission-storage)
+        - [How Permission Checks Work](#how-permission-checks-work)
+- [Caching](#caching)
 
 ## Configuration ##
 
