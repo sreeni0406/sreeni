@@ -23,47 +23,49 @@ with little to no coding on your part.
 
 ## Configuration ##
 
-1. Add the stormpath-shiro .jars to your application using Maven, Ant+Ivy, Grails, SBT or whatever
-   maven-compatible tool you prefer:
-```xml
-<dependency>
-    <groupId>com.stormpath.shiro</groupId>
-    <artifactId>stormpath-shiro-core</artifactId>
-    <version>0.5.0</version>
-</dependency>
-<dependency>
-    <groupId>com.stormpath.sdk</groupId>
-    <artifactId>stormpath-sdk-httpclient</artifactId>
-    <version>0.9.1</version>
-    <scope>runtime</scope>
-</dependency>
-```
+1. Add the stormpath-shiro .jars to your application using Maven, Ant+Ivy, Grails, SBT or whatever maven-compatible tool you prefer:
+    
+    ```xml
+    <dependency>
+      <groupId>com.stormpath.shiro</groupId>
+      <artifactId>stormpath-shiro-core</artifactId>
+      <version>0.5.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.stormpath.sdk</groupId>
+      <artifactId>stormpath-sdk-httpclient</artifactId>
+      <version>0.9.1</version>
+      <scope>runtime</scope>
+    </dependency>
+    ```
 2. Ensure you [have an API Key](http://docs.stormpath.com/rest/quickstart) so your application can communicate
    with Stormpath.  Store your API Key file somewhere secure (readable only by you), for example:
 
-        /home/myhomedir/.stormpath/apiKey.properties
+    ```text
+    /home/myhomedir/.stormpath/apiKey.properties
+    ```
 
 3. Configure `shiro.ini` with the Stormpath `ApplicationRealm`:
-```ini
-[main]
-
-stormpathClient = com.stormpath.shiro.client.ClientFactory
-; Replace this value with the file location from #2 above:
-stormpathClient.apiKeyFileLocation = /home/myhomedir/.stormpath/apiKey.properties
-; If you've configured a Shiro CacheManager (recommended to reduce network calls):
-stormpathClient.cacheManager = $cacheManager
-
-stormpathRealm = com.stormpath.shiro.realm.ApplicationRealm
-stormpathRealm.client = $stormpathClient
-stormpathRealm.applicationRestUrl = REPLACE_ME_WITH_YOUR_STORMPATH_APP_REST_URL
-
-securityManager.realm = $stormpathRealm
-```
-4. Replace the `stormpathRealm.applicationRestUrl` value above with your
-   [Application's Stormpath-specific REST URL](http://docs.stormpath.com/rest/product-guide/#locate-an-applications-rest-url), for example:
-```ini
-stormpathRealm.applicationRestUrl = https://api.stormpath.com/v1/applications/someRandomIdHereReplaceMe
-```
+    ```ini
+    [main]
+    
+    stormpathClient = com.stormpath.shiro.client.ClientFactory
+    ; Replace this value with the file location from #2 above:
+    stormpathClient.apiKeyFileLocation = /home/myhomedir/.stormpath/apiKey.properties
+    ; If you've configured a Shiro CacheManager (recommended to reduce network calls):
+    stormpathClient.cacheManager = $cacheManager
+    
+    stormpathRealm = com.stormpath.shiro.realm.ApplicationRealm
+    stormpathRealm.client = $stormpathClient
+    stormpathRealm.applicationRestUrl = REPLACE_ME_WITH_YOUR_STORMPATH_APP_REST_URL
+    
+    securityManager.realm = $stormpathRealm
+    ```
+4. Replace the `stormpathRealm.applicationRestUrl` value above with your [Application's Stormpath-specific REST URL](http://docs.stormpath.com/rest/product-guide/#locate-an-applications-rest-url), for example:
+    
+    ```ini
+    stormpathRealm.applicationRestUrl = https://api.stormpath.com/v1/applications/someRandomIdHereReplaceMe
+    ```
 
 ## Authentication ##
 
