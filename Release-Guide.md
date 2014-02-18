@@ -57,17 +57,17 @@ chmod go-rwx $HOME/.m2/settings.xml
 ## Perform the Release
 
 1. After the above prerequisites have been satisfied and you have performed the pre-release verification, run the following on the command line:
-```bash
-git checkout master
-# ensure git status reports no changes:
-git status
-# assuming no reported changes:
-mvn clean
-mvn release:clean
-# assuming no build errors:
-mvn release:prepare
-```
-
+    ```bash
+    git checkout master
+    # ensure git status reports no changes:
+    git status
+    # assuming no reported changes:
+    mvn clean
+    mvn release:clean
+    # assuming no build errors:
+    mvn release:prepare
+    ```
+    
     Enter the release version and the SCM release tag / label.  Often retaining the defaults and hitting enter is a viable option *IF* you know for sure you do not need to change them: 
 
     If you're introducing a publicly-facing API change that end-users will invoke and compile code against, you _must_ increment the minor version (e.g. 0.4 -> 0.5 or 1.3 -> 1.4).
@@ -81,9 +81,9 @@ mvn release:prepare
     Ok, continuing on.  
 
 2. Assuming the previous build commands did not result in errors:
-```bash
-mvn release:perform
-```
+    ```bash
+    mvn release:perform
+    ```
     This will build the final versioned artifacts and upload them to the Sonatype OSS repository server in a _staging_ repository.  This is called a _[staged release](https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7a.3.StageaRelease)_ - it is not yet available to the world.
 
     A staged release is fully 'done' as far as the build process is concerned, but the staged artifacts will not be released to the world in Maven Central until we log in to the repository user interface and manually execute this behavior.
