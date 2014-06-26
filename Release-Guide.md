@@ -112,22 +112,22 @@ chmod go-rwx $HOME/.m2/settings.xml
 
 Example email template:
 
-    Subject: Apache Shiro plugin for Stormpath 0.5.0 Released!
+    Subject: Apache Shiro plugin for Stormpath 0.6.0 Released!
     Body:
     
     Hi everyone,
     
-    I am pleased to announce that the version 0.5.0 of the Apache Shiro plugin for Stormpath has been released!
-
-    This is a bugfix point release that resolves 1 issue: https://github.com/stormpath/stormpath-shiro/issues?milestone=1    
-    Project documentation is here: https://github.com/stormpath/stormpath-shiro/wiki
-    Change log for 0.5.0 is here: https://github.com/stormpath/stormpath-shiro/tree/stormpath-shiro-root-0.5.0#050
+    I am pleased to announce that version 0.6.0 of the Apache Shiro plugin for Stormpath has been released!
+    
+    Issues resolved: https://github.com/stormpath/stormpath-shiro/issues?milestone=2&state=closed   
+    Project documentation: https://github.com/stormpath/stormpath-shiro/wiki
+    Change log: https://github.com/stormpath/stormpath-shiro/tree/stormpath-shiro-root-0.6.0#060
     
     Please allow 3 to 4 hours for the release artifacts to appear in Maven Central before announcing the release to the Stormpath user community.
     
     Cheers,
     
-    Your Name
+    <your name>
 
 - Close the [milestone](https://github.com/stormpath/stormpath-shiro/issues/milestones) that represents the just-released version.
 
