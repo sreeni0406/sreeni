@@ -20,6 +20,7 @@ with little to no coding on your part.
         - [Permission Storage](#permission-storage)
         - [How Permission Checks Work](#how-permission-checks-work)
 - [Caching](#caching)
+- [ID Site](#id-site)
 
 ## Configuration ##
 
@@ -394,3 +395,56 @@ stormpathClient.stormpathCacheManager = $stormpathCacheManager
 But note this approach requires you to set-up/configure two separate caching mechanisms.
 
 See `ClientFactory` `setCacheManager` and `setStormpathCacheManager` JavaDoc for more.
+
+## ID Site 
+###\*\*Not yet available - Tentative release version: 0.7.0\*\*
+
+In this guide, we discuss how to set up Stormpath to host a set of web pages that enable your Shiro application to quickly and securely offer common identity management functions like login, registration and password reset.
+
+### What is an ID Site
+
+Stormpath ID Site is a set of hosted and pre-built user interface screens that take care of common identity functions for your applications— login, registration, password reset. ID Site can be accessed via your own custom domain like id.mydomain.com and shared across multiple applications to create centralized authentication if needed.
+
+You can read a complete description about ID Site [here](http://docs.stormpath.com/guides/using-id-site).
+
+### How to Configure ID Site in your Shiro Application
+
+The Stormpath Shiro plugin already provides ID Site functionality out-of-the-box. There are only a few configuration steps you need to carry out in order to have it properly working in your application:
+
+1. **Redirect URIs**: By default, the plugin is configured to redirect both login and logout operations to `http://localhost:8080/index.jsp`. If you need to overwrite those values you need to create a configuration file `src/main/resources/config.ini` and configure `loginRedirectUri` and `logoutRedirectUri` keys under the `[IDSite]`  section. For example: 
+
+    ```ini        
+    [App]
+    baseUrl = http://myapplication.com:9999
+    [ID Site]
+    loginRedirectUri = http://myapplication.com:9999/index.jsp
+    logoutRedirectUri = http://myapplication.com:9999/index.jsp
+    ```
+Keep in mind that both URLs must also be configured in `Authorized Redirect URIs` in Stormpath for the actual redirection to be executed by ID Site.
+2. **Shiro Configuration**: In your Shiro configuration file, you need to configure the ID Site Listener that will be notified about ID Site Operations such as registration, login and logout. The listener needs to be applied to the `IdSiteServlet` that is provided by the Stormpath Shiro Plugin. For, example if your listener class is `com.mycompany.myshiroapp.idsite.IdSiteListener`, you would do something like this: 
+
+    ```ini
+    idSiteResultListener = com.mycompany.myshiroapp.idsite.IdSiteListener
+	idSiteServlet = com.stormpath.shiro.servlet.http.IdSiteServlet
+	idSiteServlet.idSiteResultListener = $idSiteResultListener
+    ```
+With this configuration, every time an ID site operation (such as login or logout) is successfully executed, the listener will be notified in the corresponding method.
+
+### Disable ID Site
+
+By default, the plugin is configured to use ID Site. However, it also provides regular form-based authentication with Stormpath. If you want to disable it you just need to set the `enable` key in the `[ID Site]` section of the configuration file to `false`:
+```ini
+[ID Site]
+enable = false
+```
+When a user wants to login, a simple application-specific login form will be shown to him. The whole authentication mechanism will be executed by the plugin, there is no need for you to write any additional code when the form-based authentication is used. 
+
+#### Custom Login Page
+
+If you desire to provide a custom login page, you will need to instruct the plugin to use it. To achieve this, just follow these steps:
+
+<ol><li>Create the new web page. Let's suppose it was placed here: `src/main/webapp/my_login.jsp`
+<li>Create a new file called: `src/main/resources/endpoints.properties`
+<li>Add the following line to the `endpoints.properties` file: `form_login = /my_login.jsp`
+
+That's it, now when the user tries to login without using ID Site, he will get your new login page displayed.
