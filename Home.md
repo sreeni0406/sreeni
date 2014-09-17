@@ -141,7 +141,7 @@ In your `shiro.ini` (or compatible configuration mechanism), you can set the sup
 [main]
 ; ... continued ...
 groupRoleResolver = com.stormpath.shiro.realm.DefaultGroupRoleResolver
-groupRoleResolver.setModeNames = NAME
+groupRoleResolver.modeNames = NAME
 stormpathRealm.groupRoleResolver = $groupRoleResolver
 ```
 
