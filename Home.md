@@ -409,9 +409,9 @@ You can read a complete description about ID Site [here](http://docs.stormpath.c
 
 ### How to Configure ID Site in your Shiro Application
 
-The Stormpath Shiro plugin already provides ID Site functionality out-of-the-box. There are only a few configuration steps you need to carry out in order to have it properly working in your application:
+The Stormpath Shiro plugin already provides ID Site functionality out-of-the-box. There is only one configuration step you need to carry out in order to have it properly working in your application:
 
-1. **Redirect URIs**: By default, the plugin is configured to redirect both login and logout operations to `http://localhost:8080/index.jsp`. If you need to overwrite those values you need to create a configuration file `src/main/resources/config.ini` and configure `loginRedirectUri` and `logoutRedirectUri` keys under the `[IDSite]`  section. For example: 
+- **Redirect URIs**: By default, the plugin is configured to redirect both login and logout operations to `http://localhost:8080/index.jsp`. If you need to overwrite those values you need to create a configuration file `src/main/resources/config.ini` and configure `loginRedirectUri` and `logoutRedirectUri` keys under the `[IDSite]`  section. For example: 
 
     ```ini        
     [App]
@@ -421,14 +421,6 @@ The Stormpath Shiro plugin already provides ID Site functionality out-of-the-box
     logoutRedirectUri = http://myapplication.com:9999/index.jsp
     ```
 Keep in mind that both URLs must also be configured in `Authorized Redirect URIs` in Stormpath for the actual redirection to be executed by ID Site.
-2. **Shiro Configuration**: In your Shiro configuration file, you need to configure the ID Site Listener that will be notified about ID Site Operations such as registration, login and logout. The listener needs to be applied to the `IdSiteServlet` that is provided by the Stormpath Shiro Plugin. For, example if your listener class is `com.mycompany.myshiroapp.idsite.IdSiteListener`, you would do something like this: 
-
-    ```ini
-    idSiteResultListener = com.mycompany.myshiroapp.idsite.IdSiteListener
-	idSiteServlet = com.stormpath.shiro.servlet.http.IdSiteServlet
-	idSiteServlet.idSiteResultListener = $idSiteResultListener
-    ```
-With this configuration, every time an ID site operation (such as login or logout) is successfully executed, the listener will be notified in the corresponding method.
 
 ### Disable ID Site
 
